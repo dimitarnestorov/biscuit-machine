@@ -1,15 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import App from './App'
+import BiscuitMachine from './BiscuitMachine'
 
 import reportWebVitals from './reportWebVitals'
+
+import './mobxConfiguration'
 
 import './index.scss'
 
 ReactDOM.render(
 	<React.StrictMode>
-		<App />
+		<BiscuitMachine />
 	</React.StrictMode>,
 	document.getElementById('root'),
 )

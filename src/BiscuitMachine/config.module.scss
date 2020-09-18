@@ -1,0 +1,31 @@
+$tickMilliseconds: 100;
+$movingMilliseconds: 2000;
+$pausedMilliseconds: 2000;
+
+:export {
+	tickMilliseconds: $tickMilliseconds;
+	movingMilliseconds: $movingMilliseconds;
+	pausedMilliseconds: $pausedMilliseconds;
+}
+
+$maxWidth: 900px;
+
+/**
+ * Adds vw unit to a variable
+ */
+@function vw($value) {
+	@return $value * 1vw;
+}
+
+/**
+ * Calculates the max width for a given vw
+ */
+@function max($value) {
+	@return ($value / 100) * $maxWidth;
+}
+
+@mixin media-max {
+	@media screen and (min-width: $maxWidth) {
+		@content;
+	}
+}
