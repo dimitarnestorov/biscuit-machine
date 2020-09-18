@@ -1,0 +1,93 @@
+@import '../config.module';
+
+.biscuit-machine > .conveyor-belt {
+	$top: 10;
+
+	width: 80%;
+	display: block;
+	position: absolute;
+	left: 10%;
+	top: vw($top);
+
+	@include media-max {
+		top: max($top);
+	}
+
+	> .conveyor-belt-path {
+		animation: conveyor-belt-stroke-animation 2s infinite normal linear;
+		animation-play-state: paused;
+	}
+
+	> .secondary-pulley {
+		animation: secondary-pulley-stroke-animation 2400ms infinite normal linear;
+		animation-play-state: paused;
+	}
+
+	> .tail-pulley {
+		animation: tail-pulley-stroke-animation 650ms infinite normal linear;
+		animation-play-state: paused;
+	}
+
+	> .vee-belt {
+		animation: vee-belt-stroke-animation 3s infinite normal linear;
+		animation-play-state: paused;
+	}
+
+	> .motor > .primary-pulley {
+		animation: primary-pulley-stroke-animation 1.5s infinite normal linear;
+		animation-play-state: paused;
+	}
+}
+
+.biscuit-machine.motor-on > .conveyor-belt {
+	> .conveyor-belt-path {
+		animation-play-state: running;
+	}
+
+	> .secondary-pulley {
+		animation-play-state: running;
+	}
+
+	> .tail-pulley {
+		animation-play-state: running;
+	}
+
+	> .vee-belt {
+		animation-play-state: running;
+	}
+
+	> .motor > .primary-pulley {
+		animation-play-state: running;
+	}
+}
+
+// https://codepen.io/mertcna/pen/XpXOGe
+@keyframes conveyor-belt-stroke-animation {
+	to {
+		stroke-dashoffset: -168px; /* calculate */
+	}
+}
+
+@keyframes secondary-pulley-stroke-animation {
+	to {
+		stroke-dashoffset: -106px; /* calculate */
+	}
+}
+
+@keyframes tail-pulley-stroke-animation {
+	to {
+		stroke-dashoffset: -35px; /* calculate */
+	}
+}
+
+@keyframes vee-belt-stroke-animation {
+	to {
+		stroke-dashoffset: -141px; /* calculate */
+	}
+}
+
+@keyframes primary-pulley-stroke-animation {
+	to {
+		stroke-dashoffset: -74px; /* calculate */
+	}
+}
