@@ -2,6 +2,7 @@
 	"name": "biscuit-machine",
 	"version": "0.1.0",
 	"private": true,
+	"homepage": "https://dimitarnestorov.github.io/biscuit-machine",
 	"dependencies": {
 		"mobx": "5.15.6",
 		"mobx-react-lite": "2.2.2",
