@@ -1,43 +1,99 @@
 {
-  "name": "biscuit-machine",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.0.4",
-    "@testing-library/user-event": "^12.1.4",
-    "@types/jest": "^26.0.13",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.49",
-    "@types/react-dom": "^16.9.8",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "4.0.0-next.98",
-    "typescript": "^4.0.2",
-    "web-vitals": "^0.2.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+	"name": "biscuit-machine",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"react": "^16.13.1",
+		"react-dom": "^16.13.1",
+		"web-vitals": "^0.2.4"
+	},
+	"devDependencies": {
+		"@testing-library/jest-dom": "^5.11.4",
+		"@testing-library/react": "^11.0.4",
+		"@testing-library/user-event": "^12.1.4",
+		"@types/jest": "^26.0.13",
+		"@types/node": "^12.0.0",
+		"@types/react": "^16.9.49",
+		"@types/react-dom": "^16.9.8",
+		"codecov": "^3.7.2",
+		"gh-pages": "^3.1.0",
+		"husky": "^4.3.0",
+		"jest-emotion": "^10.0.32",
+		"lint-staged": "^10.4.0",
+		"node-sass": "^4.14.1",
+		"prettier": "^2.1.2",
+		"react-scripts": "4.0.0-next.98",
+		"typescript": "~4.0.2"
+	},
+	"scripts": {
+		"predeploy": "npm run build",
+		"deploy": "gh-pages -d build",
+		"prettier": "prettier --ignore-path .gitignore \"**/*.+(js|ts|tsx|json|scss|css|html|md)\"",
+		"format": "npm run prettier -- --write",
+		"check-format": "npm run prettier -- --list-different",
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "bash pre-commit.sh"
+		}
+	},
+	"lint-staged": {
+		"**/*.+(js|ts|tsx|json|css|html|md)": [
+			"prettier",
+			"npm run test -- --watchAll=false --coverage --findRelatedTests",
+			"git add"
+		]
+	},
+	"jest": {
+		"collectCoverageFrom": [
+			"src/**/*.{js,ts,tsx}"
+		],
+		"coveragePathIgnorePatterns": [
+			"/node_modules/",
+			"/src/index.tsx",
+			"/src/reportWebVitals.ts",
+			"/src/react-app-env.d.ts"
+		],
+		"coverageThreshold": {
+			"global": {
+				"branches": 100,
+				"functions": 100,
+				"lines": 100,
+				"statements": 100
+			}
+		},
+		"snapshotSerializers": [
+			"jest-emotion"
+		]
+	},
+	"prettier": {
+		"semi": false,
+		"trailingComma": "all",
+		"tabWidth": 4,
+		"printWidth": 120,
+		"singleQuote": true,
+		"useTabs": true
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
 }
