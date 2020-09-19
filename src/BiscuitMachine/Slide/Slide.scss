@@ -1,0 +1,28 @@
+@import '../config.module';
+
+.biscuit-machine > .slide {
+	$top: 23;
+
+	position: absolute;
+	width: 12%;
+	right: 0;
+	top: vw($top);
+
+	@include media-max {
+		top: max($top);
+	}
+}
+
+.biscuit-machine > .slide-gradient {
+	$height: 60;
+
+	position: absolute;
+	right: 0;
+	width: 10%;
+	height: vw($height);
+	background-image: linear-gradient(to left, #ffffff 20%, rgba(255, 255, 255, 0));
+
+	@include media-max {
+		height: max($height);
+	}
+}

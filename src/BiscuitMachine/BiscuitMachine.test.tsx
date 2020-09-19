@@ -22,8 +22,8 @@ function Trigger() {
 		})
 
 		emitter.on('change', handleEvent)
-		return () => emitter.off('change', handleEvent)
-	})
+		return () => void emitter.off('change', handleEvent)
+	}, [emitter, store])
 	return null
 }
 
@@ -42,7 +42,7 @@ test('should add a helper class when isMotorMoving is true', () => {
 		return <emitterContext.Provider value={emitter}>{children}</emitterContext.Provider>
 	}
 
-	const { container } = render(<BiscuitMachineModifier />, { wrapper: Wrapper })
+	const { container } = render(<BiscuitMachineModifier />, { wrapper: Wrapper as React.ComponentType })
 
 	expect(container.children[0].classList.contains('motor-on')).toBe(false)
 	emitter.emit('change', true)

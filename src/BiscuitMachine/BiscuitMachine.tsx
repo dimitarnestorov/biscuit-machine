@@ -6,6 +6,7 @@ import Controls from './Controls'
 import MachineStore, { MachineStoreProvider } from './MachineStore'
 
 import './BiscuitMachine.scss'
+import Slide from './Slide'
 
 export default function BiscuitMachine() {
 	const [store] = useState(() => new MachineStore())
@@ -21,6 +22,7 @@ export default function BiscuitMachine() {
 			<div className={isMotorMoving ? 'biscuit-machine motor-on' : 'biscuit-machine'}>
 				<ConveyorBelt />
 				<Controls />
+				<Slide />
 			</div>
 		</MachineStoreProvider>
 	)

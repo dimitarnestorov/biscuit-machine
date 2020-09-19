@@ -1,9 +1,10 @@
 import * as FakeTimers from '@sinonjs/fake-timers'
 import { observable } from '../testUtils'
 import MachineState from './MachineState'
-import MachineStore, { useMachineStore } from './MachineStore'
+import MachineStore, { useMachineStore, MachineStoreProvider } from './MachineStore'
 import config from './config.module.scss'
 import { renderHook } from '@testing-library/react-hooks'
+import React, { ReactNode } from 'react'
 
 // const tickMilliseconds = Number(config.tickMilliseconds)
 const movingMilliseconds = Number(config.movingMilliseconds)
@@ -101,4 +102,13 @@ test('reset should be called after pulse (pausedMilliseconds + movingMillisecond
 test('useMachineStore should throw when no store is provided', () => {
 	const { result } = renderHook(useMachineStore)
 	expect(result.error).toBeInstanceOf(Error)
+})
+
+test('useMachineStore should not throw when a store is provided', () => {
+	const store = new MachineStore()
+	function Wrapper({ children }: { children: ReactNode }) {
+		return <MachineStoreProvider value={store}>{children}</MachineStoreProvider>
+	}
+	const { result } = renderHook(useMachineStore, { wrapper: Wrapper })
+	expect(result.current).toBe(store)
 })
