@@ -4,6 +4,30 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Configuration
+
+### `.env` file
+
+Most configuration is in the `.env` file located in the root of the repository:
+
+-   `REACT_APP_MAX_DOUGH` - how much dough can the extruder have
+-   `REACT_APP_INITIAL_DOUGH` - how much dough does the extruder have on page load
+-   `REACT_APP_COOKIE_COST` - how much dough does it require to make one cookie
+-   `REACT_APP_MINIMUM_OVEN_TEMPERATURE` - how much is the minimum temperature (room temperature)
+-   `REACT_APP_GOOD_BAKE_TEMPERATURE` - what is the minimum temperature that the cookies should begin baking at
+-   `REACT_APP_BURNING_BAKE_TEMPERATURE` - what is the temperature at which cookies are going to start burning
+-   `REACT_APP_BAKE_RATE` - the rate of which the cookies are baking per tick
+-   `REACT_APP_OVERBAKE_RATE` - how badly the cookies are going to burn per tick
+-   `REACT_APP_OVEN_TEMPERATURE_CHANGE_AFTER_TICK` - how much does the temeperature in the oven change per tick
+
+### `src/BiscuitMachine/config.module.scss` file
+
+Configuration that is shared between JavaScript and other `scss` files is located here:
+
+-   `$tickMilliseconds` - in how much time should the main `setInterval` callback fire
+-   `$movingMilliseconds` - how many milliseconds does the conveyor belt move
+-   `$pausedMilliseconds` - how many milliseconds does the conveyor pause for
+
 ## Available Scripts
 
 In the project directory, you can run:

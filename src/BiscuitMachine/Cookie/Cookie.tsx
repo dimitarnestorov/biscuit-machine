@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import Color from 'color'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSpring, animated } from 'react-spring'
 import { CSSTransition } from 'react-transition-group'
 
@@ -15,15 +16,32 @@ const output = [
 	'm 305.26371,113.80958 c 18.31106,-0.1074 43.5971,-0.53988 64.52546,-0.36563 22.34474,-0.57631 51.2027,4.4202 50.74169,-12.46629 0.0202,-20.994599 -92.26315,-14.98101 -207.25545,-14.98101 -114.992291,0 -209.0834923,-4.80881 -208.5979772,13.160987 0,17.496923 51.8022192,14.002373 77.7997292,14.960893 3.70639,0.14531 34.539638,-0.44669 37.628118,-0.30895 z',
 ]
 
-export default function Cookie({ isStamped, location }: { isStamped: boolean; location: Location }) {
+export default function Cookie({
+	isStamped,
+	location,
+	baked,
+}: {
+	isStamped: boolean
+	location: Location
+	baked: number
+}) {
 	const svgRef = useRef<SVGSVGElement>(null)
 
+	// https://css-tricks.com/morphing-svg-with-react-spring/
 	const spring = useSpring({ config: { duration: 800 }, x: isStamped ? 1 : 0 })
 
 	const [isMounted, setIsMounted] = useState(false)
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
+
+	const fill = useMemo(
+		() =>
+			Color('#faa21b')
+				.darken(baked / 100)
+				.hex(),
+		[baked],
+	)
 
 	return (
 		<CSSTransition
@@ -36,7 +54,7 @@ export default function Cookie({ isStamped, location }: { isStamped: boolean; lo
 				xmlns="http://www.w3.org/2000/svg"
 				version="1.1"
 				viewBox="0 0 425.24487 118.77472"
-				fill="#faa21b"
+				fill={fill}
 				stroke="#979797"
 				strokeWidth="10"
 				data-location={location}

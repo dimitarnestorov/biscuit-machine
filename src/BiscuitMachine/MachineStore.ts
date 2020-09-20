@@ -13,6 +13,12 @@ const pausedMilliseconds = Number(config.pausedMilliseconds)
 const maxDough = Number(process.env.REACT_APP_MAX_DOUGH)
 const initialDough = Number(process.env.REACT_APP_INITIAL_DOUGH)
 const cookieCost = Number(process.env.REACT_APP_COOKIE_COST)
+const minimumOvenTemperature = Number(process.env.REACT_APP_MINIMUM_OVEN_TEMPERATURE)
+const goodBakeTemperature = Number(process.env.REACT_APP_GOOD_BAKE_TEMPERATURE)
+const burningBakeTemperature = Number(process.env.REACT_APP_BURNING_BAKE_TEMPERATURE)
+const bakeRate = Number(process.env.REACT_APP_BAKE_RATE)
+const overbakeRate = Number(process.env.REACT_APP_OVERBAKE_RATE)
+const ovenTemperatureChangeAfterTick = Number(process.env.REACT_APP_OVEN_TEMPERATURE_CHANGE_AFTER_TICK)
 
 /* istanbul ignore next */
 if (process.env.NODE_ENV !== 'production') {
@@ -21,11 +27,28 @@ if (process.env.NODE_ENV !== 'production') {
 
 class Cookie {
 	id = uuid()
-	location = Location.UnderExtruder
-	isStamped = false
+	@observable location = Location.UnderExtruder
+	@observable isStamped = false
+	@observable baked = 0
 
 	stamp() {
+		/* istanbul ignore next */
+		if (process.env.NODE_ENV !== 'production') {
+			if (this.baked) throw new Error('`stamp` called after `bake` was already called at least once')
+			if (this.isStamped) throw new Error('`stamp` was already called')
+		}
+
 		this.isStamped = true
+	}
+
+	bake(temperature: number) {
+		/* istanbul ignore next */
+		if (process.env.NODE_ENV !== 'production') {
+			if (!this.isStamped) throw new Error('`bake` called before calling `stamp`')
+			if (temperature < goodBakeTemperature) throw new Error('Temperature too low')
+		}
+
+		this.baked += bakeRate * (1 + Math.max(temperature - burningBakeTemperature, 0) / overbakeRate)
 	}
 
 	move() {
@@ -43,18 +66,20 @@ function isCookieUnderExtruder(cookie: Cookie) {
 }
 
 export default class MachineStore {
-	@observable state: MachineState = MachineState.Off
+	@observable state = MachineState.Off
 	@observable dough = initialDough
-	@observable cookies: Cookie[] = []
+	@observable.shallow cookies: Cookie[] = []
+	@observable ovenTemperature = minimumOvenTemperature
 
 	// #region Properties with initial value set from reset method
-	@observable private shouldMoveIfNotPaused!: boolean // Pulse state
+	@observable private isTimeToMove!: boolean // Pulse state
 	private intervalId!: ReturnType<typeof setTimeout> | 0
 	private nextTickTimestamp!: number
 	private nextMotorStateChangeTimestamp!: number
 
 	@observable isStamperStamping!: boolean
 	@observable isMotorMoving!: boolean
+	@observable isHeatingElementOn!: boolean
 	// #endregion
 
 	constructor() {
@@ -65,12 +90,13 @@ export default class MachineStore {
 
 	private reset() {
 		clearInterval(this.intervalId as Parameters<typeof clearInterval>[0])
-		this.shouldMoveIfNotPaused = false
+		this.isTimeToMove = false
 		this.intervalId = 0
 		this.nextTickTimestamp = Infinity
 		this.nextMotorStateChangeTimestamp = Infinity
 		this.isStamperStamping = false
 		this.isMotorMoving = false
+		this.isHeatingElementOn = false
 	}
 
 	private startInterval() {
@@ -89,15 +115,24 @@ export default class MachineStore {
 	@action.bound private handleTick() {
 		const timestamp = Date.now()
 		while (this.nextTickTimestamp <= timestamp) {
-			if (!this.shouldMoveIfNotPaused && !this.shouldMove && this.state === 'off') {
+			if (
+				!this.isTimeToMove &&
+				!this.areThereUnprocessedCookies &&
+				this.state === 'off' &&
+				this.ovenTemperature <= minimumOvenTemperature
+			) {
 				this.reset()
 				continue
 			}
 
-			if (this.nextMotorStateChangeTimestamp <= this.nextTickTimestamp) {
-				this.shouldMoveIfNotPaused = !this.shouldMoveIfNotPaused
+			if (!this.isTimeToMove) this.bakeCookies()
 
-				if (this.shouldMoveIfNotPaused) {
+			this.updateOven()
+
+			if (this.nextMotorStateChangeTimestamp <= this.nextTickTimestamp) {
+				this.isTimeToMove = !this.isTimeToMove
+
+				if (this.isTimeToMove) {
 					this.isStamperStamping = false
 					this.moveConveyor()
 				} else {
@@ -114,8 +149,7 @@ export default class MachineStore {
 	}
 
 	private updateNextMotorStateChangeTimestamp(timestamp: number) {
-		this.nextMotorStateChangeTimestamp =
-			timestamp + (this.shouldMoveIfNotPaused ? movingMilliseconds : pausedMilliseconds)
+		this.nextMotorStateChangeTimestamp = timestamp + (this.isTimeToMove ? movingMilliseconds : pausedMilliseconds)
 	}
 
 	private updateNextTickTimestamp(timestamp: number) {
@@ -130,12 +164,21 @@ export default class MachineStore {
 		this.cookies.push(new Cookie())
 	}
 
-	private get shouldMove() {
+	private get areThereUnprocessedCookies() {
 		return Boolean(this.cookies.find((cookie) => cookie.location <= Location.Slide))
 	}
 
+	// Checks if oven is ready when there is a cookie ready to cook
+	private get shouldMoveIntoOven() {
+		if (this.cookies.find((cookie) => cookie.location === Location.AfterStamper)) {
+			return this.ovenTemperature >= goodBakeTemperature
+		}
+
+		return true // There are not any ready to bake cookies (conveyor should move)
+	}
+
 	private moveConveyor() {
-		if (this.state === 'paused' || !this.shouldMove) return
+		if (this.state === 'paused' || !this.areThereUnprocessedCookies || !this.shouldMoveIntoOven) return
 
 		let movingCookies = 0
 		for (let i = this.cookies.length - 1; i >= 0; i--) {
@@ -156,6 +199,34 @@ export default class MachineStore {
 		if (!cookie || cookie.isStamped) return
 		cookie.stamp()
 		this.isStamperStamping = true
+	}
+
+	private updateOven() {
+		this.ovenTemperature = Math.max(
+			this.ovenTemperature + ovenTemperatureChangeAfterTick * (this.isHeatingElementOn ? 1 : -1),
+			5,
+		)
+		if (
+			this.isHeatingElementOn &&
+			(this.ovenTemperature >= burningBakeTemperature ||
+				(!this.areThereUnprocessedCookies && this.state === 'off'))
+		) {
+			this.isHeatingElementOn = false
+		} else if (
+			!this.isHeatingElementOn &&
+			this.ovenTemperature <= goodBakeTemperature &&
+			(this.areThereUnprocessedCookies || this.state !== 'off')
+		) {
+			this.isHeatingElementOn = true
+		}
+	}
+
+	private bakeCookies() {
+		for (const cookie of this.cookies) {
+			const location = cookie.location
+			if (location !== Location.InOven1 && location !== Location.InOven2) continue
+			cookie.bake(this.ovenTemperature)
+		}
 	}
 
 	@action changeState(newState: MachineState) {
