@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/biscuit-machine/static/css/main.afcfaf0b.chunk.css",
-    "main.js": "/biscuit-machine/static/js/main.4dbef5d3.chunk.js",
-    "main.js.map": "/biscuit-machine/static/js/main.4dbef5d3.chunk.js.map",
+    "main.css": "/biscuit-machine/static/css/main.cce557f4.chunk.css",
+    "main.js": "/biscuit-machine/static/js/main.72e71c06.chunk.js",
+    "main.js.map": "/biscuit-machine/static/js/main.72e71c06.chunk.js.map",
     "runtime-main.js": "/biscuit-machine/static/js/runtime-main.faa73e1d.js",
     "runtime-main.js.map": "/biscuit-machine/static/js/runtime-main.faa73e1d.js.map",
-    "static/js/2.2c2172ac.chunk.js": "/biscuit-machine/static/js/2.2c2172ac.chunk.js",
-    "static/js/2.2c2172ac.chunk.js.map": "/biscuit-machine/static/js/2.2c2172ac.chunk.js.map",
+    "static/js/2.a06ce7a3.chunk.js": "/biscuit-machine/static/js/2.a06ce7a3.chunk.js",
+    "static/js/2.a06ce7a3.chunk.js.map": "/biscuit-machine/static/js/2.a06ce7a3.chunk.js.map",
     "static/js/3.a4d0b1bf.chunk.js": "/biscuit-machine/static/js/3.a4d0b1bf.chunk.js",
     "static/js/3.a4d0b1bf.chunk.js.map": "/biscuit-machine/static/js/3.a4d0b1bf.chunk.js.map",
     "index.html": "/biscuit-machine/index.html",
-    "static/css/main.afcfaf0b.chunk.css.map": "/biscuit-machine/static/css/main.afcfaf0b.chunk.css.map",
-    "static/js/2.2c2172ac.chunk.js.LICENSE.txt": "/biscuit-machine/static/js/2.2c2172ac.chunk.js.LICENSE.txt"
+    "static/css/main.cce557f4.chunk.css.map": "/biscuit-machine/static/css/main.cce557f4.chunk.css.map",
+    "static/js/2.a06ce7a3.chunk.js.LICENSE.txt": "/biscuit-machine/static/js/2.a06ce7a3.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.faa73e1d.js",
-    "static/js/2.2c2172ac.chunk.js",
-    "static/css/main.afcfaf0b.chunk.css",
-    "static/js/main.4dbef5d3.chunk.js"
+    "static/js/2.a06ce7a3.chunk.js",
+    "static/css/main.cce557f4.chunk.css",
+    "static/js/main.72e71c06.chunk.js"
   ]
 }
