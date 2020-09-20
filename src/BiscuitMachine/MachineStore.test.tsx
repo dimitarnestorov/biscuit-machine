@@ -14,6 +14,7 @@ const minimumOvenTemperature = Number(process.env.REACT_APP_MINIMUM_OVEN_TEMPERA
 const goodBakeTemperature = Number(process.env.REACT_APP_GOOD_BAKE_TEMPERATURE)
 const burningBakeTemperature = Number(process.env.REACT_APP_BURNING_BAKE_TEMPERATURE)
 const ovenTemperatureChangeAfterTick = Number(process.env.REACT_APP_OVEN_TEMPERATURE_CHANGE_AFTER_TICK)
+const maximumGoodBakedRate = Number(process.env.REACT_APP_MAXIMUM_GOOD_BAKED_RATE)
 
 test('changeState should set state', async () => {
 	await withStore((store) => {
@@ -250,6 +251,34 @@ test('should turn heating element on when switched from off to paused state', ()
 			runInAction(() => store.changeState(MachineState.Paused))
 			clock.tick(tickMilliseconds)
 			expect(observable(() => store.isHeatingElementOn)).toBe(true)
+		}),
+	))
+
+test('should increase goodCookies counter', () =>
+	withStore((store) =>
+		withClock((clock) => {
+			runInAction(() => store.changeState(MachineState.On))
+			clock.tick(tickMilliseconds)
+			runInAction(() => store.changeState(MachineState.Off))
+			while (observable(() => store.cookies.length)) clock.tick(pausedMilliseconds + movingMilliseconds)
+
+			expect(observable(() => store.goodCookies)).toBe(1)
+		}),
+	))
+
+test('should increase badCookies counter', () =>
+	withStore((store) =>
+		withClock((clock) => {
+			runInAction(() => store.changeState(MachineState.On))
+			clock.tick(tickMilliseconds)
+			runInAction(() => store.changeState(MachineState.Off))
+			while (observable(() => store.cookies[0].baked === 0)) clock.tick(tickMilliseconds)
+			runInAction(() => store.changeState(MachineState.Paused))
+			while (observable(() => store.cookies[0].baked < maximumGoodBakedRate)) clock.tick(tickMilliseconds)
+			runInAction(() => store.changeState(MachineState.On))
+			while (observable(() => store.cookies.length)) clock.tick(pausedMilliseconds + movingMilliseconds)
+
+			expect(observable(() => store.badCookies)).toBe(1)
 		}),
 	))
 
