@@ -8,7 +8,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### `.env` file
 
-Most configuration is in the `.env` file located in the root of the repository:
+Most configuration is in the `.env` file located in the root of the repository. When changing this file Jest and the development server must be restarted for changes to take effect.
 
 -   `REACT_APP_MAX_DOUGH` - how much dough can the extruder have
 -   `REACT_APP_INITIAL_DOUGH` - how much dough does the extruder have on page load
@@ -19,6 +19,8 @@ Most configuration is in the `.env` file located in the root of the repository:
 -   `REACT_APP_BAKE_RATE` - the rate of which the cookies are baking per tick
 -   `REACT_APP_OVERBAKE_RATE` - how badly the cookies are going to burn per tick
 -   `REACT_APP_OVEN_TEMPERATURE_CHANGE_AFTER_TICK` - how much does the temeperature in the oven change per tick
+-   `REACT_APP_MINIMUM_GOOD_BAKED_RATE` - at what rate a cookie is considered well cooked
+-   `REACT_APP_MAXIMUM_GOOD_BAKED_RATE` - at what rate a cookie is considered burnt
 
 ### `src/BiscuitMachine/config.module.scss` file
 

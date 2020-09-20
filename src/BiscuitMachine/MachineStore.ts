@@ -19,6 +19,8 @@ const burningBakeTemperature = Number(process.env.REACT_APP_BURNING_BAKE_TEMPERA
 const bakeRate = Number(process.env.REACT_APP_BAKE_RATE)
 const overbakeRate = Number(process.env.REACT_APP_OVERBAKE_RATE)
 const ovenTemperatureChangeAfterTick = Number(process.env.REACT_APP_OVEN_TEMPERATURE_CHANGE_AFTER_TICK)
+const minimumGoodBakedRate = Number(process.env.REACT_APP_MINIMUM_GOOD_BAKED_RATE)
+const maximumGoodBakedRate = Number(process.env.REACT_APP_MAXIMUM_GOOD_BAKED_RATE)
 
 /* istanbul ignore next */
 if (process.env.NODE_ENV !== 'production') {
@@ -70,6 +72,8 @@ export default class MachineStore {
 	@observable dough = initialDough
 	@observable.shallow cookies: Cookie[] = []
 	@observable ovenTemperature = minimumOvenTemperature
+	@observable badCookies = 0
+	@observable goodCookies = 0
 
 	// #region Properties with initial value set from reset method
 	@observable private isTimeToMove!: boolean // Pulse state
@@ -188,6 +192,15 @@ export default class MachineStore {
 				this.cookies.splice(i, 1)
 				continue
 			}
+
+			if (location === Location.AfterOven) {
+				if (cookie.baked >= minimumGoodBakedRate && cookie.baked <= maximumGoodBakedRate) {
+					this.goodCookies++
+				} else {
+					this.badCookies++
+				}
+			}
+
 			cookie.move()
 			movingCookies++
 		}

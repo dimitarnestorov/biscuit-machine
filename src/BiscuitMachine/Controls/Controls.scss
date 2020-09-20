@@ -12,11 +12,33 @@
 	border: 4px solid #aaa;
 	border-radius: 20px;
 	display: flex;
-	flex-direction: column;
-	list-style-type: none;
+	align-items: center;
+
+	@media screen and (max-width: 500px) {
+		flex-direction: column;
+	}
 
 	@include media-max {
 		top: max($top);
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
+
+	.splitter {
+		width: 1px;
+		background: #999;
+		height: 50px;
+		margin: 0 10px;
+
+		@media screen and (max-width: 500px) {
+			height: 1px;
+			width: 80px;
+			margin: 10px 0;
+		}
 	}
 
 	label {
