@@ -1,9 +1,14 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react'
-import { render } from '../testUtils'
+import { render, withClock } from '../testUtils'
 import BiscuitMachine from './BiscuitMachine'
 import MachineStore, { useMachineStore } from './MachineStore'
 import EventEmitter from 'events'
 import { action } from 'mobx'
+import config from './config.module.scss'
+import user from '@testing-library/user-event'
+
+const movingMilliseconds = Number(config.movingMilliseconds)
+const pausedMilliseconds = Number(config.pausedMilliseconds)
 
 const emitterContext = createContext<EventEmitter | null>(null)
 
@@ -22,8 +27,8 @@ function Trigger() {
 		})
 
 		emitter.on('change', handleEvent)
-		return () => emitter.off('change', handleEvent)
-	})
+		return () => void emitter.off('change', handleEvent)
+	}, [emitter, store])
 	return null
 }
 
@@ -42,11 +47,11 @@ test('should add a helper class when isMotorMoving is true', () => {
 		return <emitterContext.Provider value={emitter}>{children}</emitterContext.Provider>
 	}
 
-	const { container } = render(<BiscuitMachineModifier />, { wrapper: Wrapper })
+	const { container } = render(<BiscuitMachineModifier />, { wrapper: Wrapper as React.ComponentType })
 
-	expect(container.children[0].classList.contains('motor-on')).toBe(false)
+	expect(container.firstChild).not.toHaveClass('motor-on')
 	emitter.emit('change', true)
-	expect(container.children[0].classList.contains('motor-on')).toBe(true)
+	expect(container.firstChild).toHaveClass('motor-on')
 })
 
 test('should call store.destroy on unmount', () => {
@@ -62,3 +67,13 @@ test('should call store.destroy on unmount', () => {
 
 	spy.mockRestore()
 })
+
+test('should render just fine with a bunch of cookies', () =>
+	withClock((clock) => {
+		const { rerender, getByLabelText } = render(<BiscuitMachine />)
+
+		user.click(getByLabelText(/on/i))
+
+		expect(() => void clock.tick((pausedMilliseconds + movingMilliseconds) * 14)).not.toThrow()
+		expect(() => void rerender(<BiscuitMachine />)).not.toThrow()
+	}))

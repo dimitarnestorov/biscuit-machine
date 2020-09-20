@@ -1,0 +1,80 @@
+@import '../config.module';
+
+.biscuit-machine > .extruder {
+	position: absolute;
+	width: 9.7%;
+	left: 26%;
+
+	> .extruder-svg {
+		$height: 10;
+
+		width: 100%;
+		height: vw($height);
+
+		@include media-max {
+			height: max($height);
+		}
+	}
+
+	> .extruder-refill {
+		position: absolute;
+		left: 40%;
+		width: 20%;
+		height: 20%;
+		top: 30%;
+		cursor: pointer;
+		transition: opacity 300ms linear;
+
+		&.extruder-refill-hide {
+			opacity: 0;
+			cursor: default;
+		}
+	}
+
+	> .extruder-dough {
+		$height: 2.6;
+		$top: 6.4;
+
+		position: absolute;
+		width: 4%;
+		left: 48%;
+		height: vw($height);
+		top: vw($top);
+
+		@include media-max {
+			height: max($height);
+			top: max($top);
+		}
+	}
+
+	> .extruder-dough::before {
+		content: '';
+		background: #979797;
+		position: absolute;
+		top: 100%;
+		width: 100%;
+	}
+
+	&.extruder-extruding > .extruder-dough::before {
+		animation: extrude ms($extrudeDuration) linear 1 forwards;
+	}
+}
+
+/* https://codepen.io/jenningscreate/pen/pdMMZJ */
+@keyframes extrude {
+	0% {
+		top: 100%;
+		bottom: 0%;
+	}
+
+	#{$extrudeMovingPercentage},
+	#{100 - $extrudeMovingPercentage} {
+		top: 100%;
+		bottom: -200%;
+	}
+
+	100% {
+		top: 300%;
+		bottom: -200%;
+	}
+}

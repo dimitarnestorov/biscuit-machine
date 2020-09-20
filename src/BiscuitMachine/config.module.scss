@@ -2,6 +2,12 @@ $tickMilliseconds: 100;
 $movingMilliseconds: 2000;
 $pausedMilliseconds: 2000;
 
+$extrudeMovingKeyframe: 0.06;
+$extrudeMovingPercentage: $extrudeMovingKeyframe * 100%;
+$extrudeDuration: 1300; // ms
+$cookieTransitionDelay: $extrudeMovingKeyframe * $extrudeDuration; // ms
+$cookieTransformTransitionDuration: $extrudeDuration - $cookieTransitionDelay + 200; // ms
+
 :export {
 	tickMilliseconds: $tickMilliseconds;
 	movingMilliseconds: $movingMilliseconds;
@@ -15,6 +21,13 @@ $maxWidth: 900px;
  */
 @function vw($value) {
 	@return $value * 1vw;
+}
+
+/**
+ * Adds ms unit to a variable
+ */
+@function ms($value) {
+	@return $value * 1ms;
 }
 
 /**
