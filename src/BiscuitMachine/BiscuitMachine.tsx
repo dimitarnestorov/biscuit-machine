@@ -6,6 +6,7 @@ import ConveyorBelt from './ConeyorBelt'
 import Controls from './Controls'
 import Extruder from './Extruder'
 import MachineStore, { MachineStoreProvider, useMachineStore } from './MachineStore'
+import Oven from './Oven'
 import Stamper from './Stamper'
 import Slide from './Slide'
 
@@ -16,7 +17,7 @@ function Cookies() {
 
 	return (useObserver(() =>
 		store.cookies.map((cookie) => (
-			<Cookie key={cookie.id} isStamped={cookie.isStamped} location={cookie.location} />
+			<Cookie key={cookie.id} isStamped={cookie.isStamped} location={cookie.location} baked={cookie.baked} />
 		)),
 	) as unknown) as JSX.Element
 }
@@ -39,6 +40,7 @@ export default function BiscuitMachine() {
 				<Stamper />
 				<Cookies />
 				<Slide />
+				<Oven />
 			</div>
 		</MachineStoreProvider>
 	)
