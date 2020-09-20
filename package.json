@@ -34,12 +34,15 @@
 		"jest-emotion": "^10.0.32",
 		"lint-staged": "^10.4.0",
 		"node-sass": "^4.14.1",
+		"patch-package": "^6.2.2",
+		"postinstall-postinstall": "^2.1.0",
 		"prettier": "^2.1.2",
 		"react-scripts": "4.0.0-next.98",
 		"react-test-renderer": "^16.13.1",
 		"typescript": "~4.0.2"
 	},
 	"scripts": {
+		"postinstall": "patch-package",
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d build",
 		"prettier": "prettier --ignore-path .gitignore \"**/*.+(js|ts|tsx|json|scss|css|html|md)\"",
