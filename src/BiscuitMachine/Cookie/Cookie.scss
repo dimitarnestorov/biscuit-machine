@@ -1,0 +1,103 @@
+@import '../config.module';
+@import '../locations.module';
+
+.biscuit-machine > .cookie {
+	$top: 12.3;
+	$height: 2;
+
+	position: absolute;
+	top: vw($top);
+	left: 27.6%;
+	width: 6.5%;
+	height: vw($height);
+	padding-bottom: vw($height); // Makes scale transition look as if it's starting from the bottom
+	transition-delay: ms($cookieTransitionDelay);
+	transition: transform ms($cookieTransformTransitionDuration) linear, left ms($movingMilliseconds) linear;
+	transform: scale(0);
+	will-change: transform;
+
+	@include media-max {
+		top: max($top);
+		height: max($height);
+		padding-bottom: max($height);
+	}
+
+	&.cookie-enter-active,
+	&.cookie-enter-done,
+	&.cookie-exit {
+		transform: scale(1);
+	}
+
+	&[data-location='#{$locationUnderStamper}'] {
+		left: 37.7%;
+	}
+
+	&[data-location='#{$locationAfterStamper}'] {
+		left: 47.8%;
+	}
+
+	&[data-location='#{$locationInOven1}'] {
+		left: 57.95%;
+	}
+
+	&[data-location='#{$locationInOven2}'] {
+		left: 68.1%;
+	}
+
+	&[data-location='#{$locationAfterOven}'] {
+		left: 78.2%;
+	}
+
+	&[data-location='#{$locationSlide}'] {
+		left: 78.2%;
+		animation: cookie-rotate-slide ($pausedMilliseconds + $movingMilliseconds + $tickMilliseconds + 50ms) linear 1; // A bit over so that it does not reappear back on to the conveyor (so that it is unmounted before the animation ends)
+	}
+
+	// You can not pass a function as an argument, we need this helper fucntion
+	@function run-fn($fn, $value) {
+		@if $fn == 'vw' {
+			@return vw($value);
+		} @else {
+			@return max($value);
+		}
+	}
+
+	@mixin keyframes-cookie-rotate-slide($fn) {
+		@keyframes cookie-rotate-slide {
+			0% {
+				transform: translate(0, 0) rotate(0deg);
+			}
+
+			25% {
+				transform: translate(run-fn($fn, 5.5), 0) rotate(0deg);
+			}
+
+			40% {
+				transform: translate(run-fn($fn, 7.55), run-fn($fn, 0.845)) rotate(26deg);
+			}
+
+			55% {
+				transform: translate(run-fn($fn, 8.89), run-fn($fn, 3.32)) rotate(68deg);
+			}
+
+			60% {
+				transform: translate(run-fn($fn, 9.885), run-fn($fn, 6.845)) rotate(68deg);
+			}
+
+			70% {
+				transform: translate(run-fn($fn, 12.375), run-fn($fn, 10.105)) rotate(14deg);
+			}
+
+			85%,
+			100% {
+				transform: translate(run-fn($fn, 20.635), run-fn($fn, 12.165)) rotate(14deg);
+			}
+		}
+	}
+
+	@include keyframes-cookie-rotate-slide(vw);
+
+	@include media-max {
+		@include keyframes-cookie-rotate-slide(max);
+	}
+}

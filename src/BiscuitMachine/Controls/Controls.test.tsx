@@ -4,9 +4,11 @@ import Controls from './Controls'
 import user from '@testing-library/user-event'
 
 test('should render with off state by default', () => {
-	const { getByLabelText } = renderWithStore(<Controls />)
+	const { getByLabelText, store } = renderWithStore(<Controls />)
 
 	expect((getByLabelText('Off') as HTMLInputElement).checked).toBe(true)
+
+	store.destroy()
 })
 
 test('should change state to On', () => {

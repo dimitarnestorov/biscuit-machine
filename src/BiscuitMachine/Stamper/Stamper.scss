@@ -1,0 +1,23 @@
+@import '../config.module';
+
+.biscuit-machine > .stamper {
+	$height: 14.7;
+
+	position: absolute;
+	width: 9.7%;
+	height: vw($height);
+	left: 36.1%;
+
+	@include media-max {
+		height: max($height);
+	}
+
+	&.stamper-stamp > .stamper-arm {
+		transform: translateY(-3px);
+	}
+
+	> .stamper-arm {
+		transform: translateY(-25px);
+		transition: transform 800ms linear; /* match duration in cookie spring */
+	}
+}

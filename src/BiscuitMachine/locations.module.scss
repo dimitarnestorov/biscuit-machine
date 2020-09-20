@@ -1,0 +1,17 @@
+$locationUnderExtruder: '0';
+$locationUnderStamper: '1';
+$locationAfterStamper: '2';
+$locationInOven1: '3';
+$locationInOven2: '4';
+$locationAfterOven: '5';
+$locationSlide: '6';
+
+:export {
+	underExtruder: $locationUnderExtruder;
+	underStamper: $locationUnderStamper;
+	afterStamper: $locationAfterStamper;
+	inOven1: $locationInOven1;
+	inOven2: $locationInOven2;
+	afterOven: $locationAfterOven;
+	slide: $locationSlide;
+}

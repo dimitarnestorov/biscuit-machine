@@ -1,26 +1,15 @@
-import * as FakeTimers from '@sinonjs/fake-timers'
-import { observable } from '../testUtils'
+import { observable, withClock, withStore } from '../testUtils'
 import MachineState from './MachineState'
 import MachineStore, { useMachineStore, MachineStoreProvider } from './MachineStore'
 import config from './config.module.scss'
 import { renderHook } from '@testing-library/react-hooks'
 import React, { ReactNode } from 'react'
+import Location from './Location'
+import { runInAction } from 'mobx'
 
 // const tickMilliseconds = Number(config.tickMilliseconds)
 const movingMilliseconds = Number(config.movingMilliseconds)
 const pausedMilliseconds = Number(config.pausedMilliseconds)
-
-async function withStore(fn: (store: MachineStore) => Promise<void> | void) {
-	const store = new MachineStore()
-	await fn(store)
-	store.destroy()
-}
-
-async function withClock(fn: (clock: FakeTimers.InstalledClock) => Promise<void> | void) {
-	const clock = FakeTimers.install({ now: 1_000_000_000 })
-	await fn(clock)
-	clock.uninstall()
-}
 
 test('changeState should set state', async () => {
 	await withStore((store) => {
@@ -76,8 +65,7 @@ test('isMotorMoving should be false after pausedMilliseconds when machine is pau
 test('reset should be called after pulse (pausedMilliseconds + movingMilliseconds) and state is off', () =>
 	withStore((store) =>
 		withClock((clock) => {
-			type T = { reset(): void }
-			const spy = jest.spyOn<T, 'reset'>((MachineStore.prototype as unknown) as T, 'reset')
+			const spy = jest.spyOn((MachineStore.prototype as unknown) as { reset(): void }, 'reset')
 
 			expect(clock!.countTimers()).toBe(0)
 
@@ -89,13 +77,59 @@ test('reset should be called after pulse (pausedMilliseconds + movingMillisecond
 
 			expect(clock!.countTimers()).toBe(1)
 
-			clock!.tick(pausedMilliseconds / 2 + movingMilliseconds)
+			clock!.tick(
+				pausedMilliseconds / 2 +
+					movingMilliseconds +
+					(pausedMilliseconds + movingMilliseconds) * (Object.values(Location).length / 2),
+			) // We need to wait for cookie to get off of conveyor
 
 			expect(clock!.countTimers()).toBe(0)
 
 			expect(spy).toBeCalledTimes(1)
 
 			spy.mockRestore()
+		}),
+	))
+
+test('cookie location should change', () =>
+	withStore((store) =>
+		withClock((clock) => {
+			runInAction(() => store.changeState(MachineState.On))
+
+			clock.tick(pausedMilliseconds)
+
+			expect(observable(() => store.cookies[0].location)).not.toBe(Location.UnderExtruder)
+		}),
+	))
+
+test('should not create cookies if there is not enough dough', () =>
+	withStore((store) =>
+		withClock((clock) => {
+			runInAction(() => {
+				store.dough = 0
+				store.changeState(MachineState.On)
+			})
+
+			clock.tick((pausedMilliseconds + movingMilliseconds) * 20)
+
+			expect(observable(() => store.cookies.length)).toBe(0)
+		}),
+	))
+
+test('should not create cookies if there is one under extruder already', () =>
+	withStore((store) =>
+		withClock((clock) => {
+			runInAction(() => {
+				store.changeState(MachineState.On)
+				store.changeState(MachineState.Paused)
+			})
+
+			clock.tick(pausedMilliseconds)
+			runInAction(() => store.changeState(MachineState.On))
+
+			clock.tick(movingMilliseconds)
+
+			expect(observable(() => store.cookies.length)).toBe(1)
 		}),
 	))
 
