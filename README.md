@@ -28,6 +28,16 @@ Configuration that is shared between JavaScript and other `scss` files is locate
 -   `$movingMilliseconds` - how many milliseconds does the conveyor belt move
 -   `$pausedMilliseconds` - how many milliseconds does the conveyor pause for
 
+## Future ideas
+
+-   [ ] Detect bad cookies and have a mechanism where they’re sent in the trash rather than down the slide
+-   [ ] Expose read only machine state for debug purposes (something like "Stats for nerds" on YouTube)
+-   [ ] Different cookie recipes (takes less time to cook, no stamping, etc.)
+-   [ ] Cookie recipes which start a fire if over cooked, fire detectors, sprinklers
+-   [ ] Flower extruder so that stamper doesn’t stick
+-   [ ] Changing settings (how fast cookies bake, when they’re considered good, etc.) and storing them in local storage
+-   [ ] Restart button which resets all the state
+
 ## Available Scripts
 
 In the project directory, you can run:
