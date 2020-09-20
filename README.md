@@ -2,6 +2,8 @@
 
 [![codecov](https://codecov.io/gh/dimitarnestorov/biscuit-machine/branch/master/graph/badge.svg)](https://codecov.io/gh/dimitarnestorov/biscuit-machine)
 
+![Showcase](.github/showcase.png)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Configuration
