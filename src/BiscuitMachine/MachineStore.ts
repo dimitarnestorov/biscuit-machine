@@ -89,7 +89,7 @@ export default class MachineStore {
 	@action.bound private handleTick() {
 		const timestamp = Date.now()
 		while (this.nextTickTimestamp <= timestamp) {
-			if (!this.shouldMoveIfNotPaused && !this.areThereCookiesOnTheConveyor && this.state === 'off') {
+			if (!this.shouldMoveIfNotPaused && !this.shouldMove && this.state === 'off') {
 				this.reset()
 				continue
 			}
@@ -130,12 +130,12 @@ export default class MachineStore {
 		this.cookies.push(new Cookie())
 	}
 
-	private get areThereCookiesOnTheConveyor() {
-		return Boolean(this.cookies.filter((cookie) => cookie.location < 8).length)
+	private get shouldMove() {
+		return Boolean(this.cookies.find((cookie) => cookie.location <= Location.Slide))
 	}
 
 	private moveConveyor() {
-		if (this.state === 'paused' || !this.areThereCookiesOnTheConveyor) return
+		if (this.state === 'paused' || !this.shouldMove) return
 
 		let movingCookies = 0
 		for (let i = this.cookies.length - 1; i >= 0; i--) {
